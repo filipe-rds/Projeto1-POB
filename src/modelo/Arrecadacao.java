@@ -20,7 +20,7 @@ public class Arrecadacao {
 		this.total = 0.0;
 	}
 	
-	public Arrecadacao() {}
+	public Arrecadacao () {}
 	
 	
 	public LocalDate getData() {

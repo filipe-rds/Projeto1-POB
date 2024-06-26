@@ -1,14 +1,20 @@
 package regras_negocio;
 
+
 import java.util.List;
-import com.db4o.foundation.List4;
-import com.db4o.query.Query;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import daodb4o.*;
-import modelo.*;
+
+import daodb4o.DAO;
+import daodb4o.DAOVeiculo;
+import daodb4o.DAORegistro;
+import daodb4o.DAOArrecadacao;
+import modelo.Veiculo;
+import modelo.Registro;
+import modelo.Arrecadacao;
+
 
 public class Fachada {
 
@@ -163,6 +169,20 @@ public class Fachada {
         return registro;
     }
 
+    
+    // Metodo em stand by
+    public static void alterarRegistroTipo(int id) throws Exception{
+        DAO.begin();
+        Registro registro = daoaregistro.read(id);
+        if(registro==null)
+            throw new Exception("Registro nao existe:" + id);
+        registro.setTipo("Saida");
+        daoaregistro.update(registro);
+        DAO.commit();
+    }
+
+
+
     public static void excluirRegistro(int id) throws Exception{
 
         DAO.begin();
@@ -241,35 +261,45 @@ public class Fachada {
         return arrecadacoes;
     }
 
-    public static Arrecadacao buscarArrecadacao(String dataString) throws Exception {
+    public static Arrecadacao buscarArrecadacao(String dataString) throws Exception{
         DAO.begin();
         Arrecadacao arrecadacao = daoarrecadacao.read(dataString);
-        if (arrecadacao == null)
+        if(arrecadacao==null)
             throw new Exception("Arrecadação não existe nesta data: " + dataString);
         return arrecadacao;
     }
-    
-    // Consultas
 
-    public static List<Registro> RegistrosNaData(String data) throws Exception {
-        List<Registro> registros = daoaregistro.getRegistrosNaData(data);
-        if (registros.size() == 0)
+
+    //Consultas
+
+    public static List<Veiculo> veiculosNaData(String data) throws Exception {
+        List<Veiculo> veiculos = daoveiculo.getVeiculosNaData(data);
+
+        if (veiculos==null)
+            throw new Exception("Nenhum veículo cadastrado nesta data");
+
+        return veiculos;
+    }
+
+    public static List<Veiculo>  veiculosAcimaDoRegistro(int n) throws Exception {
+        List<Veiculo> veiculos = daoveiculo.getVeiculosAcimaDoRegistro(n);
+        
+        if(veiculos==null)
+            throw new Exception("Nenhum veículo cadastrado com mais de " + n + " registros");
+            
+        return veiculos;
+    }
+
+    public static List<Registro> registrosNaData(String data) throws Exception {
+        List<Registro> registros = daoaregistro.registrosNaData(data);
+
+        if (registros==null)
             throw new Exception("Nenhum registro cadastrado nesta data");
+
         return registros;
     }
-    
-    public static List<Veiculo> VeiculosNaData(String data) throws Exception {
-        List<Veiculo> veiculos = daoveiculo.getVeiculosNaData(data);
-        if (veiculos.size() == 0)
-            throw new Exception("Nenhum veículo cadastrado nesta data");
-        return veiculos;
-    }
 
-    public static List<Veiculo> VeiculosAcimaDoRegistro(int n) throws Exception {
-        List<Veiculo> veiculos = daoveiculo.getVeiculosAcimaDoRegistro(n);
-        if (veiculos.size() == 0)
-            throw new Exception("Nenhum veículo cadastrado com " + n + " registros");
-        return veiculos;
-    }
+
+
     
 }

@@ -36,6 +36,7 @@ public class Cadastrar {
       System.out.println(e.getMessage());
     }
     Fachada.finalizar();
+    System.out.println("Cadastros realizados com sucesso!");
   }
   
   public static void main(String[] args) {

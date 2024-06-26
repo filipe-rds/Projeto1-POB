@@ -32,7 +32,7 @@ public class DAORegistro extends DAO<Registro>{
 
     // Consulta 1 - Registros em uma determinada data
     
-    public List<Registro> getRegistrosNaData(String data){
+    public List<Registro> registrosNaData(String data){
         Query q = manager.query();
         q.constrain(Registro.class);
         List<Registro> resultados = q.execute();

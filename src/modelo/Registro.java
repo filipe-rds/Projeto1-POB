@@ -9,7 +9,7 @@ public class Registro {
 	private String tipo; // entrada ou saida do veiculo
 	
 	public Registro(int id, Veiculo veiculo,String tipo) {
-		this.id = id;
+		this.id = id - 1;
 		this.veiculo = veiculo;
 		this.tipo = tipo;
 		this.datahora = LocalDateTime.now(); 
