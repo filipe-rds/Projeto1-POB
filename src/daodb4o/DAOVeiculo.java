@@ -46,7 +46,7 @@ public class DAOVeiculo extends DAO<Veiculo>{
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
             String dataFormatada = dataObjeto.format(formatter);
 
-            if (dataFormatada.equals(data)){
+            if ((dataFormatada.equals(data)) && !listaCarros.contains(r.getVeiculo())){
                 listaCarros.add(r.getVeiculo());
             }
         }
