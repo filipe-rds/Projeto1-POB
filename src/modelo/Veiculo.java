@@ -36,6 +36,7 @@ public class Veiculo {
 	public String toString() {
 		return "Veiculo [placa=" + placa + ", registros=" + registros + "] \n" ;
 	}
+
 	
 	
 }

@@ -23,7 +23,6 @@ public class Fachada {
 	private static DAOVeiculo daoveiculo = new DAOVeiculo();  
 	private static DAORegistro daoaregistro = new DAORegistro(); 
 	private static DAOArrecadacao daoarrecadacao = new DAOArrecadacao();
-	//public static Usuario logado;	//contem o objeto Usuario logado em TelaLogin.java
 
 	public static void inicializar(){
 		DAO.open();
@@ -76,23 +75,24 @@ public class Fachada {
     public static void excluirVeiculo(String placa) throws Exception {
         DAO.begin();
         Veiculo veiculo = buscarVeiculo(placa);
+        if (veiculo == null) {
+            throw new Exception("Veiculo nao existe: " + placa);
+        }
 
         List<Registro> registros = veiculo.getRegistros();
 
-        if (registros.size() == 0) {
+        // Verifica se registros é null ou não
+        if (registros == null || registros.isEmpty()) {
+            daoveiculo.delete(veiculo);
+        } else {
+            Registro ultimoRegistro = registros.get(registros.size() - 1);
+
+            if (ultimoRegistro.getTipo().equals("entrada")) {
+                throw new Exception("Veiculo nao pode ser excluido, pois possui registro de entrada");
+            }
 
             daoveiculo.delete(veiculo);
-            DAO.commit();
-            return;
-
         }
-
-        Registro ultimoRegistro = registros.get(registros.size() - 1);
-
-        if (ultimoRegistro.getTipo().equals("Entrada"))
-            throw new Exception("Veiculo nao pode ser excluido, pois possui registro de entrada");
-
-        daoveiculo.delete(veiculo);
         DAO.commit();
     }
     
@@ -155,7 +155,7 @@ public class Fachada {
             if (registros.size() > 0) {
                 Registro ultimoRegistro = registros.get(registros.size() - 1);
 
-                if (ultimoRegistro.getTipo().equals("Entrada"))
+                if (ultimoRegistro.getTipo().equals("entrada"))
                     throw new Exception("Veiculo já está no estacionamento");
             }
 
@@ -168,7 +168,7 @@ public class Fachada {
 
             LocalDateTime dataUltimoRegistro = ultimoRegistro.getDatahora();
 
-            if (ultimoRegistro.getTipo().equals("Saida"))
+            if (ultimoRegistro.getTipo().equals("saida"))
                 throw new Exception("Veiculo já saiu do estacionamento");
 
             LocalDate dataInicio = dataUltimoRegistro.toLocalDate();
@@ -293,6 +293,8 @@ public class Fachada {
     public static void excluirArrecadacao(String data) throws Exception {
         DAO.begin();
         Arrecadacao arrecadacao = buscarArrecadacao(data);
+        if (arrecadacao == null)
+            throw new Exception("Arrecadação não existe nesta data: " + data);
         daoarrecadacao.delete(arrecadacao);
         DAO.commit();
     }
@@ -319,8 +321,6 @@ public class Fachada {
     public static Arrecadacao buscarArrecadacao(String dataString) throws Exception{
         DAO.begin();
         Arrecadacao arrecadacao = daoarrecadacao.read(dataString);
-        if(arrecadacao==null)
-            throw new Exception("Arrecadação não existe nesta data: " + dataString);
         return arrecadacao;
     }
 
