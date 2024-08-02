@@ -31,7 +31,6 @@ public class Veiculo {
 	}
 	
 	// Methods
-	
 	@Override
 	public String toString() {
 		return "Veiculo [placa=" + placa + ", registros=" + registros + "] \n" ;

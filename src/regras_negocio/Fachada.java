@@ -39,31 +39,52 @@ public class Fachada {
         Exceções: se o veículo já estiver cadastrado, lança uma exceção.
         Retorno: retorna o veículo cadastrado.
     */
-    public static Veiculo cadastrarVeiculo(String placa) throws Exception{
-        DAO.begin(); 
+    public static Veiculo cadastrarVeiculo(String placa) throws Exception {
+        DAO.begin();
         Veiculo veiculo = daoveiculo.read(placa);
-        if(veiculo!=null)
+        if (veiculo != null)
             throw new Exception("Veiculo ja cadastrado:" + placa);
         veiculo = new Veiculo(placa);
         daoveiculo.create(veiculo);
         DAO.commit();
-		return veiculo;
-    } 
-
-    /*  
-        --> Método para adicionar um registro a um veículo cadastrado.
-        Fluxo: ele busca o veículo com a placa informada e adiciona o registro a ele.
-        Exceções: se o veículo não existir, lança uma exceção.
-        Retorno: não há retorno.
-    */
+        return veiculo;
+    }
+    
+    /*
+     * --> Método para adicionar um registro a um veículo cadastrado.
+     * Fluxo: ele busca o veículo com a placa informada e adiciona o registro a ele.
+     * Exceções: se o veículo não existir, lança uma exceção.
+     * Retorno: não há retorno.
+     */
     public static void adicionarRegistroVeiculo(String placa, Registro registro) throws Exception {
 
         DAO.begin();
         Veiculo veiculo = buscarVeiculo(placa);
+        if (veiculo == null) {
+            throw new Exception("Veiculo nao existe: " + placa);
+        }
         veiculo.getRegistros().add(registro);
         daoveiculo.update(veiculo);
         DAO.commit();
 
+    }
+
+    /*  
+        --> Método para remover um registro de um veículo cadastrado.
+        Fluxo: ele busca o veículo com a placa informada e remove o registro dele.
+        Exceções: se o veículo não existir, lança uma exceção.
+        Retorno: não há retorno.
+    */
+    public static void removerRegistroVeiculo(String placa, Registro registro) throws Exception {
+
+        DAO.begin();
+        Veiculo veiculo = buscarVeiculo(placa);
+        if (veiculo == null) {
+            throw new Exception("Veiculo nao existe: " + placa);
+        }
+        veiculo.getRegistros().remove(registro);
+        daoveiculo.update(veiculo);
+        DAO.commit();
     }
     
     /*  
@@ -187,7 +208,7 @@ public class Fachada {
         }
 
         Registro registro = new Registro(id, veiculo, tipo);
-        adicionarRegistroVeiculo(placa, registro);
+        Fachada.adicionarRegistroVeiculo(placa, registro);
         daoaregistro.create(registro);
         DAO.commit();
         return registro;
@@ -195,16 +216,21 @@ public class Fachada {
 
     /*  
         --> Método para excluir um registro do sistema de estacionamento.
-        Fluxo: ele busca o registro com o id informado e o exclui do banco de dados.
+        Fluxo: ele busca o registro com o id informado e o exclui do array de rsgistros do veículo e consequentemente no banco de dados.
         Exceções: se o registro não existir, lança uma exceção.
         Retorno: não há retorno.
     */
     public static void excluirRegistro(int id) throws Exception {
-
         DAO.begin();
-        Registro registro = daoaregistro.read(id);
-        if (registro == null)
-            throw new Exception("Registro nao existe:" + id);
+        Registro registro = Fachada.buscarRegistro(id);
+        if (registro == null) {
+            throw new Exception("Registro não encontrado");
+        }
+        Veiculo veiculo = registro.getVeiculo();
+        String placa = veiculo.getPlaca();
+        Fachada.removerRegistroVeiculo(placa,registro);
+
+        daoveiculo.update(veiculo);
         daoaregistro.delete(registro);
         DAO.commit();
     }
