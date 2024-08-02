@@ -6,7 +6,7 @@
   <img alt="GitHub license" src="https://img.shields.io/github/license/filipe-rds/Projeto1-POB?color=yellow"><img>
 </p>
 <div align="center">
-  <img src="./assets/preview.png" height="500" width="700"><br>
+  <img src="src\arquivos\imagem.png" height="400" width="500"><br>
 </div>
 <div style="display: inline_block" ><br>
     <h3><img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Rocket.png" alt="Rocket" width="30" height="30" /> Objetivo:</h3>
