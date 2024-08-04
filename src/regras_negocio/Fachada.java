@@ -229,8 +229,6 @@ public class Fachada {
         Veiculo veiculo = registro.getVeiculo();
         String placa = veiculo.getPlaca();
         Fachada.removerRegistroVeiculo(placa,registro);
-
-        daoveiculo.update(veiculo);
         daoaregistro.delete(registro);
         DAO.commit();
     }
