@@ -1,14 +1,12 @@
 package daodb4o;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import modelo.Veiculo;
 import modelo.Registro;
-
 import java.util.List;
-
 import com.db4o.query.Query;
+import com.db4o.query.Predicate;
 
 public class DAOVeiculo extends DAO<Veiculo>{
 
@@ -29,60 +27,43 @@ public class DAOVeiculo extends DAO<Veiculo>{
 
     // Consulta 1 - Veículos que possuem registros em uma determinada data
 
-    public List<Veiculo> getVeiculosNaData(String data){
+    public List<Veiculo> getVeiculosNaData(String data) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        LocalDate dataLocalDate = LocalDate.parse(data, formatter);
 
-        Query q = manager.query();
-        q.constrain(Registro.class);
-        List<Registro> resultados = q.execute();
-
-        if (resultados.isEmpty())
-            return null;
-
-        List<Veiculo> listaCarros = new ArrayList<>();
-
-        for (Registro r: resultados){
-
-            LocalDateTime dataObjeto = r.getDatahora();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            String dataFormatada = dataObjeto.format(formatter);
-
-            if ((dataFormatada.equals(data)) && !listaCarros.contains(r.getVeiculo())){
-                listaCarros.add(r.getVeiculo());
+        List<Veiculo> listaVeiculos = manager.query(new Predicate<Veiculo>() {
+            @Override
+            public boolean match(Veiculo veiculo) {
+                for (Registro r : veiculo.getRegistros()) {
+                    if (r.getDatahora().toLocalDate().equals(dataLocalDate)) {
+              
+                        return true;
+                    }
+                }
+                return false;
             }
-        }
+        });
 
-        if (listaCarros.isEmpty())
+        if (listaVeiculos.isEmpty())
             return null;
 
-        return listaCarros;
-
+        return listaVeiculos;
     }
-
     // Consulta 2 - Veículos que possuem registros acima de uma determinada quantidade
 
     public List<Veiculo> getVeiculosAcimaDoRegistro(int quantidade){
 
-        List<Veiculo> listaVeiculos = new ArrayList<>();
-
-        Query q = manager.query();
-        q.constrain(Veiculo.class);
-        List<Veiculo> todosVeiculos = q.execute();
-
-        if (todosVeiculos.isEmpty())
-            return null;
-
-        for (Veiculo v: todosVeiculos){
-            if (v.getRegistros().size() > quantidade){
-                listaVeiculos.add(v);
+        List<Veiculo> listaVeiculos = manager.query(new Predicate<Veiculo>() {
+            @Override
+            public boolean match(Veiculo veiculo) {
+                return veiculo.getRegistros().size() > quantidade;
             }
-        }
-
-        if(listaVeiculos.isEmpty())
+        });
+        
+        if (listaVeiculos.isEmpty())
             return null;
 
         return listaVeiculos;
-        
-        
 
     }
 

@@ -1,10 +1,10 @@
 package daodb4o;
 import modelo.Registro;
 import java.util.List;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import com.db4o.query.Query;
+import com.db4o.query.Predicate;
 
 public class DAORegistro extends DAO<Registro>{
 
@@ -33,29 +33,18 @@ public class DAORegistro extends DAO<Registro>{
     // Consulta 1 - Registros em uma determinada data
     
     public List<Registro> registrosNaData(String data){
-        Query q = manager.query();
-        q.constrain(Registro.class);
-        List<Registro> resultados = q.execute();
-
-        if (resultados.isEmpty())
-            return null;
-
-        List<Registro> listaRegistros = new ArrayList<>();
-
-        for (Registro r: resultados){
-
-            LocalDateTime dataObjeto = r.getDatahora();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            String dataFormatada = dataObjeto.format(formatter);
-
-            if (dataFormatada.equals(data)){
-                listaRegistros.add(r);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        LocalDate dataLocalDate = LocalDate.parse(data, formatter);
+        
+        List<Registro> listaRegistros = manager.query(new Predicate<Registro>() {
+            @Override
+            public boolean match(Registro registro) {
+                return registro.getDatahora().toLocalDate().equals(dataLocalDate);
             }
-        }
+        });
 
         if (listaRegistros.isEmpty())
             return null;
-
         return listaRegistros;
 
     }
