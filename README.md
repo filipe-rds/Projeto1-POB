@@ -24,5 +24,5 @@
     <h3>💻 Tecnologias e Ferramentas </h3>
     <img alt="Java" src="https://img.shields.io/badge/Java-000000?style=for-the-badge&logo=openjdk&logoColor=white">
     <img alt="Eclipse" src="https://img.shields.io/badge/eclipse-000000?style=for-the-badge&logo=eclipse&logoColor=white">
-    <img alt="Shell" src="https://img.shields.io/badge/Sheel Script-000000?style=for-the-badge&logo=shell&logoColor=white">
+    <img alt="Shell" src="https://img.shields.io/badge/Shell Script-000000?style=for-the-badge&logo=shell&logoColor=white">
 </div>
