@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# ATENÇÃO: RODE ESTE SCRIPT COM O GIT BASH NO WINDOWS OU COM O BASH NO LINUX !!!!!!
+
 # Script criado para rodar o projeto Java com bibliotecas que não são mais acessíveis por padrão a partir do Java 9
 
 # Definir os argumentos da JVM
